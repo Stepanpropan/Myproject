@@ -20,7 +20,6 @@ def lose_menu():
                         pygame.quit()
                         quit()
 
-        # Main Menu UI
         screen.fill((110, 0, 120))
         title = text_format("GAME OVER", font, 90, (0, 150, 200))
         if selected == "quit":
@@ -31,7 +30,6 @@ def lose_menu():
         title_rect = title.get_rect()
         quit_rect = text_quit.get_rect()
 
-        # Main Menu Text
         screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
         screen.blit(text_quit, (WIDTH / 2 - (quit_rect[2] / 2), 360))
         pygame.display.update()
@@ -67,7 +65,6 @@ def main_menu():
                         pygame.quit()
                         quit()
 
-        # Main Menu UI
         screen.fill((110, 0, 120))
         title = text_format("Arkanoid", font, 90, (0, 150, 200))
         if selected == "start":
@@ -83,7 +80,6 @@ def main_menu():
         start_rect = text_start.get_rect()
         quit_rect = text_quit.get_rect()
 
-        # Main Menu Text
         screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
         screen.blit(text_start, (WIDTH / 2 - (start_rect[2] / 2), 300))
         screen.blit(text_quit, (WIDTH / 2 - (quit_rect[2] / 2), 360))
@@ -115,7 +111,7 @@ def collisium(dx, dy, ball, rect):
 pygame.init()
 SIZE = (WIDTH, HEIGHT) = (1200, 800)
 fps = 60
-font = "fo/Retro.ttf"
+font = "Font/Retro.ttf"
 
 paddle_wight = 330
 paddle_height = 35
@@ -128,8 +124,8 @@ ball_rect = int(ball_radius * 2 ** 0.5)
 ball = pygame.Rect(rnd(ball_rect, WIDTH - ball_rect), HEIGHT // 2, ball_rect, ball_rect)
 dx, dy = 1, -1
 
-sound_paddle = pygame.mixer.Sound('paddle.mp3')
-sound_block = pygame.mixer.Sound('block.mp3')
+sound_paddle = pygame.mixer.Sound('Sound/paddle.mp3')
+sound_block = pygame.mixer.Sound('Sound/block.mp3')
 
 block_list = [pygame.Rect(10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
 color_list = [(rnd(30, 256), rnd(30, 256), rnd(30, 256)) for i in range(10) for j in range(4)]
