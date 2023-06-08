@@ -1,6 +1,40 @@
 import pygame
 from random import randrange as rnd
 
+def win_menu():
+    menu = True
+    selected = "quit"
+
+    while menu:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                menu = False
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if selected == "start":
+                        menu = False
+                    if selected == "quit":
+                        pygame.quit()
+                        quit()
+
+        screen.fill((50, 50, 120))
+        title = text_format("YOU WIN!", font, 90, (0, 150, 200))
+        if selected == "quit":
+            text_quit = text_format("QUIT", font, 75, (255, 255, 255))
+        else:
+            text_quit = text_format("QUIT", font, 75, (0, 0, 0))
+
+        title_rect = title.get_rect()
+        quit_rect = text_quit.get_rect()
+
+        screen.blit(title, (WIDTH / 2 - (title_rect[2] / 2), 80))
+        screen.blit(text_quit, (WIDTH / 2 - (quit_rect[2] / 2), 360))
+        pygame.display.update()
+        clock.tick(fps)
+        pygame.display.set_caption("menu")
+
 
 def lose_menu():
     menu = True
@@ -20,7 +54,7 @@ def lose_menu():
                         pygame.quit()
                         quit()
 
-        screen.fill((110, 0, 120))
+        screen.fill((50, 50, 120))
         title = text_format("GAME OVER", font, 90, (0, 150, 200))
         if selected == "quit":
             text_quit = text_format("QUIT", font, 75, (255, 255, 255))
@@ -65,7 +99,7 @@ def main_menu():
                         pygame.quit()
                         quit()
 
-        screen.fill((110, 0, 120))
+        screen.fill((50, 50, 120))
         title = text_format("Arkanoid", font, 90, (0, 150, 200))
         if selected == "start":
             text_start = text_format("START NEW GAME", font, 75, (255, 255, 255))
@@ -97,7 +131,6 @@ def collisium(dx, dy, ball, rect):
         delta_y = ball.bottom - rect.top
     else:
         delta_y = rect.bottom - ball.top
-
     if abs(delta_x - delta_y) < 10:
         dx, dy = -dx, -dy
     elif delta_x > delta_y:
@@ -113,9 +146,9 @@ SIZE = (WIDTH, HEIGHT) = (1200, 800)
 fps = 60
 font = "Font/Retro.ttf"
 
-paddle_wight = 330
+paddle_wight = 220
 paddle_height = 35
-paddle_speed = 15
+paddle_speed = 11
 paddle = pygame.Rect(WIDTH // 2 - paddle_wight // 2, HEIGHT - paddle_height - 10, paddle_wight, paddle_height)
 
 ball_radius = 20
@@ -128,12 +161,13 @@ sound_paddle = pygame.mixer.Sound('Sound/paddle.mp3')
 sound_block = pygame.mixer.Sound('Sound/block.mp3')
 
 block_list = [pygame.Rect(10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
-color_list = [(rnd(30, 256), rnd(30, 256), rnd(30, 256)) for i in range(10) for j in range(4)]
+color_list = [(rnd(254, 255), rnd(254, 255), rnd(0, 1)) for i in range(10) for j in range(4)]
 
-
+brek = 0
+score = 0
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
-background = pygame.image.load('images/background.png')
+background = pygame.image.load('images/back.png')
 
 main_menu()
 while True:
@@ -142,9 +176,9 @@ while True:
             exit()
     screen.blit(background, (0, 0))
 
-    [pygame.draw.rect(screen, color_list[color], block) for color, block in enumerate(block_list)]
+    [pygame.draw.rect(screen, pygame.Color('orange'), block) for color, block in enumerate(block_list)]
     pygame.draw.rect(screen, pygame.Color('grey'), paddle)
-    pygame.draw.circle(screen, pygame.Color('red'), ball.center, ball_radius)
+    pygame.draw.circle(screen, pygame.Color('yellow'), ball.center, ball_radius)
 
     ball.x += ball_speed * dx
     ball.y += ball_speed * dy
@@ -152,7 +186,6 @@ while True:
     if ball.centerx < ball_radius or ball.centerx > WIDTH - ball_radius:
         dx = -dx
         sound_paddle.play()
-
 
     if ball.centery < ball_radius:
         dy = -dy
@@ -170,7 +203,8 @@ while True:
         dx, dy = collisium(dx, dy, ball, hit_rect)
         hit_rect.inflate_ip(ball.width * 1.5, ball.height * 1.5)
         pygame.draw.rect(screen, hit_color, hit_rect)
-        fps += 3
+        ball_speed += 0.2
+        score += 1
 
     if ball.bottom > HEIGHT:
         lose_menu()
@@ -180,11 +214,22 @@ while True:
 
     if key[pygame.K_LEFT] and paddle.left > 0:
         paddle.left -= paddle_speed
-        ball_speed = 6
+
 
     if key[pygame.K_RIGHT] and paddle.right < WIDTH:
         paddle.right += paddle_speed
-        ball_speed = 6
+
+    if key[pygame.K_SPACE]:
+        ball_speed = 5
+        brek = 1
+
+    if brek == 0:
+        inf = text_format("Press <SPACE>", font, 50, (0, 200, 0))
+        inf_rect = inf.get_rect()
+        screen.blit(inf, (500, 580))
+
+    if score == 40:
+        win_menu()
 
     pygame.display.flip()
     clock.tick(fps)
